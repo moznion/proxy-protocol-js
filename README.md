@@ -1,4 +1,4 @@
-proxy-protocol-js [![CircleCI](https://circleci.com/gh/moznion/proxy-protocol-js.svg?style=svg)](https://circleci.com/gh/moznion/proxy-protocol-js) [![codecov](https://codecov.io/gh/moznion/proxy-protocol-js/branch/master/graph/badge.svg)](https://codecov.io/gh/moznion/proxy-protocol-js)
+proxy-protocol-js [![CircleCI](https://circleci.com/gh/moznion/proxy-protocol-js.svg?style=svg)](https://circleci.com/gh/moznion/proxy-protocol-js) [![codecov](https://codecov.io/gh/moznion/proxy-protocol-js/branch/master/graph/badge.svg)](https://codecov.io/gh/moznion/proxy-protocol-js) [![NPM](https://nodei.co/npm/proxy-protocol-js.png?compact=true)](https://nodei.co/npm/proxy-protocol-js/)
 ==
 
 A PROXY protocol builder and parser for JavaScript
