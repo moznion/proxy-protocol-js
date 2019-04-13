@@ -19,10 +19,10 @@ export class V1ProxyProtocol implements ProxyProtocol {
   })();
 
   constructor(
-    private readonly inetProtocol: INETProtocol,
-    private readonly source: Host,
-    private readonly destination: Host,
-    private readonly data?: string,
+    readonly inetProtocol: INETProtocol,
+    readonly source: Host,
+    readonly destination: Host,
+    readonly data?: string,
   ) {}
 
   build(): string {

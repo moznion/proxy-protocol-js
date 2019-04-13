@@ -12,10 +12,10 @@ export interface ProxyProtocol {
     build(): string;
 }
 export declare class V1ProxyProtocol implements ProxyProtocol {
-    private readonly inetProtocol;
-    private readonly source;
-    private readonly destination;
-    private readonly data?;
+    readonly inetProtocol: INETProtocol;
+    readonly source: Host;
+    readonly destination: Host;
+    readonly data?: string | undefined;
     private static readonly v1ProxyProtocolRegexp;
     constructor(inetProtocol: INETProtocol, source: Host, destination: Host, data?: string | undefined);
     build(): string;
