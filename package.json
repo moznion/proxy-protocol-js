@@ -1,0 +1,50 @@
+{
+  "name": "proxy-protocol",
+  "version": "1.0.0",
+  "description": "A PROXY protocol builder and parser for JavaScript",
+  "main": "lib/proxy-protocol.js",
+  "types": "lib/proxy-protocol.d.ts",
+  "directories": {
+    "lib": "lib",
+    "example": "example"
+  },
+  "scripts": {
+    "clean": "rm -rf lib/*",
+    "build": "tsc",
+    "lint": "tslint --project ./tsconfig.json --config ./tslint.json",
+    "fix-lint": "npm run lint -- --fix",
+    "prettier": "find src -name \"*.ts\" | xargs prettier --config .prettierrc",
+    "fmt": "npm run prettier -- --write",
+    "check-illegal-fmt": "npm run prettier -- --list-different",
+    "fix": "npm run fmt && npm run fix-lint",
+    "test": "jest",
+    "check": "npm run lint && npm run check-illegal-fmt && npm run test"
+  },
+  "keywords": [
+    "PROXY-protocol"
+  ],
+  "homepage": "https://github.com/moznion/proxy-protocol-js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moznion/proxy-protocol-js"
+  },
+  "bugs": {
+    "url": "https://github.com/moznion/proxy-protocol-js/issues"
+  },
+  "author": {
+    "name": "moznion",
+    "email": "moznion@gmail.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^24.0.11",
+    "@types/node": "^11.13.4",
+    "jest": "^24.7.1",
+    "prettier": "^1.17.0",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.15.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.4.3"
+  },
+  "dependencies": {}
+}

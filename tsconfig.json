@@ -1,0 +1,48 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "es2018"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+
+    "rootDir": "src",
+    "outDir": "lib",
+
+    "strict": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "strictNullChecks": true,
+    "removeComments": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "noFallthroughCasesInSwitch": true,
+    "preserveConstEnums": true,
+    "declaration": true,
+    "sourceMap": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "*",
+        "node_modules/*",
+        "test/*"
+      ]
+    },
+
+    "types": [
+      "node",
+      "jest"
+    ]
+  },
+  "exclude": [
+    "src/**/*.test.ts"
+  ],
+  "include": [
+    "src/**/*.ts"
+  ]
+}
+
