@@ -1,5 +1,5 @@
 {
-  "name": "proxy-protocol",
+  "name": "proxy-protocol-js",
   "version": "1.0.0",
   "description": "A PROXY protocol builder and parser for JavaScript",
   "main": "lib/proxy-protocol.js",

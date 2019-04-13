@@ -1,4 +1,4 @@
-import { V1ProxyProtocol } from 'proxy-protocol';
+import { V1ProxyProtocol } from 'proxy-protocol-js';
 
 const protocolText = 'PROXY TCP4 127.0.0.1 192.0.2.1 12345 54321\r\n';
 const proto = V1ProxyProtocol.parse(protocolText);

@@ -1,4 +1,4 @@
-import { Host, INETProtocol, V1ProxyProtocol } from 'proxy-protocol';
+import { Host, INETProtocol, V1ProxyProtocol } from 'proxy-protocol-js';
 
 const src = new Host('127.0.0.1', 12345);
 const dst = new Host('192.0.2.1', 54321);

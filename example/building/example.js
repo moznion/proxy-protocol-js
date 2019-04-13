@@ -1,4 +1,4 @@
-const proxyProtocol = require('proxy-protocol');
+const proxyProtocol = require('proxy-protocol-js');
 
 const src = new proxyProtocol.Host('127.0.0.1', 12345);
 const dst = new proxyProtocol.Host('192.0.2.1', 54321);

@@ -1,4 +1,4 @@
-const proxyProtocol = require('proxy-protocol');
+const proxyProtocol = require('proxy-protocol-js');
 
 const protocolText = 'PROXY TCP4 127.0.0.1 192.0.2.1 12345 54321\r\n';
 const proto = proxyProtocol.V1ProxyProtocol.parse(protocolText);
