@@ -1,6 +1,6 @@
 {
   "name": "proxy-protocol-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A PROXY protocol builder and parser for JavaScript",
   "main": "lib/proxy-protocol.js",
   "types": "lib/proxy-protocol.d.ts",
