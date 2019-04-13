@@ -16,5 +16,7 @@ module.exports = {
     "json",
     "node"
   ],
+  "coverageDirectory": "./coverage/",
+  "collectCoverage": true
 };
 
