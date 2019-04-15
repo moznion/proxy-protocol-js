@@ -1,4 +1,4 @@
-import { V2ProxyProtocol } from './V2ProxyProtocol';
+import { V2ProxyProtocol, V2ProxyProtocolParseError } from './V2ProxyProtocol';
 import { Command } from './enum/Command';
 import { TransportProtocol } from './enum/TransportProtocol';
 import { IPv4Address, IPv4ProxyAddress } from './proxy_address/IPv4ProxyAddress';
@@ -409,4 +409,264 @@ test('should build V2 proxy protocol with UNIX address successfully', async () =
 
   expect(got).toEqual(expectedBin);
   expect(V2ProxyProtocol.parse(got)).toEqual(proto);
+});
+
+test("should fail parsing when it doesn't have certain protocol signature", async () => {
+  const bin = new Uint8Array([
+    13, //  <= start of the protocol signature
+    10, //  ^
+    13, //  |
+    10, //  |
+    0, //   |
+    13, //  |
+    10, //  |
+    255, // | <= invalid!!!
+    85, //  |
+    73, //  |
+    84, //  v
+    10, //  <= end of the protocol signature
+    32, //  <= version (0x20) | command (LOCAL:0x00)
+    18, //  <= address-family (INET:0x10) | transport-proto (DGRAM:0x02)
+    0, //   <= length of remaining (upper)
+    12, //  <= length of remaining (lower)
+    127, // <= start of source address
+    0, //   ^
+    0, //   v
+    1, //   <= end of source address
+    192, // <= start of destination address
+    0, //   ^
+    2, //   v
+    1, //   <= end of destination address
+    48, //  <= src port (upper)
+    57, //  <= src port (lower)
+    212, // <= dst port (upper)
+    49, //  <= dst port (lower)
+  ]);
+
+  expect(() => {
+    V2ProxyProtocol.parse(bin);
+  }).toThrowError(new V2ProxyProtocolParseError("given binary doesn't have v2 PROXY protocol's signature"));
+});
+
+test('should fail parsing when a byte for version and command is missing', async () => {
+  const bin = new Uint8Array([
+    13, //  <= start of the protocol signature
+    10, //  ^
+    13, //  |
+    10, //  |
+    0, //   |
+    13, //  |
+    10, //  |
+    81, //  |
+    85, //  |
+    73, //  |
+    84, //  v
+    10, //  <= end of the protocol signature
+  ]);
+
+  expect(() => {
+    V2ProxyProtocol.parse(bin);
+  }).toThrowError(
+    new V2ProxyProtocolParseError("given binary doesn't have a byte for version and command (13rd byte)"),
+  );
+});
+
+test('should fail parsing when a version is invalid', async () => {
+  const bin = new Uint8Array([
+    13, //  <= start of the protocol signature
+    10, //  ^
+    13, //  |
+    10, //  |
+    0, //   |
+    13, //  |
+    10, //  |
+    81, //  |
+    85, //  |
+    73, //  |
+    84, //  v
+    10, //  <= end of the protocol signature
+    0, //  <= invalid!!!
+  ]);
+
+  expect(() => {
+    V2ProxyProtocol.parse(bin);
+  }).toThrowError(new V2ProxyProtocolParseError('given protocol version is invalid'));
+});
+
+test('should fail parsing when a command is invalid', async () => {
+  const bin = new Uint8Array([
+    13, //  <= start of the protocol signature
+    10, //  ^
+    13, //  |
+    10, //  |
+    0, //   |
+    13, //  |
+    10, //  |
+    81, //  |
+    85, //  |
+    73, //  |
+    84, //  v
+    10, //  <= end of the protocol signature
+    0x2f, //  <= invalid!!!
+  ]);
+
+  expect(() => {
+    V2ProxyProtocol.parse(bin);
+  }).toThrowError(new V2ProxyProtocolParseError('given command is invalid'));
+});
+
+test('should fail parsing when a byte for address family and transport protocol is missing', async () => {
+  const bin = new Uint8Array([
+    13, //  <= start of the protocol signature
+    10, //  ^
+    13, //  |
+    10, //  |
+    0, //   |
+    13, //  |
+    10, //  |
+    81, //  |
+    85, //  |
+    73, //  |
+    84, //  v
+    10, //  <= end of the protocol signature
+    32, //  <= version (0x20) | command (LOCAL:0x00)
+  ]);
+
+  expect(() => {
+    V2ProxyProtocol.parse(bin);
+  }).toThrowError(
+    new V2ProxyProtocolParseError(
+      "given binary doesn't have a byte for address family and transport protocol (14th byte)",
+    ),
+  );
+});
+
+test('should fail parsing when address family is invalid', async () => {
+  const bin = new Uint8Array([
+    13, //  <= start of the protocol signature
+    10, //  ^
+    13, //  |
+    10, //  |
+    0, //   |
+    13, //  |
+    10, //  |
+    81, //  |
+    85, //  |
+    73, //  |
+    84, //  v
+    10, //  <= end of the protocol signature
+    32, //  <= version (0x20) | command (LOCAL:0x00)
+    0xf0, // <= invalid!!!
+  ]);
+
+  expect(() => {
+    V2ProxyProtocol.parse(bin);
+  }).toThrowError(new V2ProxyProtocolParseError('given address family is invalid'));
+});
+
+test('should fail parsing when transport protocol is invalid', async () => {
+  const bin = new Uint8Array([
+    13, //  <= start of the protocol signature
+    10, //  ^
+    13, //  |
+    10, //  |
+    0, //   |
+    13, //  |
+    10, //  |
+    81, //  |
+    85, //  |
+    73, //  |
+    84, //  v
+    10, //  <= end of the protocol signature
+    32, //  <= version (0x20) | command (LOCAL:0x00)
+    0x0f, // <= invalid!!!
+  ]);
+
+  expect(() => {
+    V2ProxyProtocol.parse(bin);
+  }).toThrowError(new V2ProxyProtocolParseError('given transport protocol is invalid'));
+});
+
+test('should fail parsing when higher byte that represents the length is missing', async () => {
+  const bin = new Uint8Array([
+    13, //  <= start of the protocol signature
+    10, //  ^
+    13, //  |
+    10, //  |
+    0, //   |
+    13, //  |
+    10, //  |
+    81, //  |
+    85, //  |
+    73, //  |
+    84, //  v
+    10, //  <= end of the protocol signature
+    32, //  <= version (0x20) | command (LOCAL:0x00)
+    18, //  <= address-family (INET:0x10) | transport-proto (DGRAM:0x02)
+  ]);
+
+  expect(() => {
+    V2ProxyProtocol.parse(bin);
+  }).toThrowError(new V2ProxyProtocolParseError("given binary doesn't have bytes for specifying length"));
+});
+
+test('should fail parsing when lower byte that represents the length is missing', async () => {
+  const bin = new Uint8Array([
+    13, //  <= start of the protocol signature
+    10, //  ^
+    13, //  |
+    10, //  |
+    0, //   |
+    13, //  |
+    10, //  |
+    81, //  |
+    85, //  |
+    73, //  |
+    84, //  v
+    10, //  <= end of the protocol signature
+    32, //  <= version (0x20) | command (LOCAL:0x00)
+    18, //  <= address-family (INET:0x10) | transport-proto (DGRAM:0x02)
+    0,
+  ]);
+
+  expect(() => {
+    V2ProxyProtocol.parse(bin);
+  }).toThrowError(new V2ProxyProtocolParseError("given binary doesn't have bytes for specifying length"));
+});
+
+test("should fail parsing when specified length and address family's length are conflicted", async () => {
+  const bin = new Uint8Array([
+    13, //  <= start of the protocol signature
+    10, //  ^
+    13, //  |
+    10, //  |
+    0, //   |
+    13, //  |
+    10, //  |
+    81, //  |
+    85, //  |
+    73, //  |
+    84, //  v
+    10, //  <= end of the protocol signature
+    32, //  <= version (0x20) | command (LOCAL:0x00)
+    18, //  <= address-family (INET:0x10) | transport-proto (DGRAM:0x02)
+    255, //   <= length of remaining (upper) : invalid!!!
+    255, //  <= length of remaining (lower)  : invalid!!!
+    127, // <= start of source address
+    0, //   ^
+    0, //   v
+    1, //   <= end of source address
+    192, // <= start of destination address
+    0, //   ^
+    2, //   v
+    1, //   <= end of destination address
+    48, //  <= src port (upper)
+    57, //  <= src port (lower)
+    212, // <= dst port (upper)
+    49, //  <= dst port (lower)
+  ]);
+
+  expect(() => {
+    V2ProxyProtocol.parse(bin);
+  }).toThrowError(new V2ProxyProtocolParseError("given specified length and address family's length are mismatched"));
 });

@@ -123,7 +123,7 @@ export class V2ProxyProtocol {
     }
     const command = Command[Command[versionAndCommand[1]]];
     if (command === undefined) {
-      throw new V2ProxyProtocolParseError('given protocol command is invalid');
+      throw new V2ProxyProtocolParseError('given command is invalid');
     }
 
     // 14th byte
@@ -136,11 +136,11 @@ export class V2ProxyProtocol {
     const afAndTransportProtocol = this.separate8bit(afAndTransportProtocolByte);
     const addressFamily = AddressFamily[AddressFamily[afAndTransportProtocol[0]]];
     if (addressFamily === undefined) {
-      throw new V2ProxyProtocolParseError('given protocol address family is invalid');
+      throw new V2ProxyProtocolParseError('given address family is invalid');
     }
     const transportProtocol = TransportProtocol[TransportProtocol[afAndTransportProtocol[1]]];
     if (transportProtocol === undefined) {
-      throw new V2ProxyProtocolParseError('given transport protocol family is invalid');
+      throw new V2ProxyProtocolParseError('given transport protocol is invalid');
     }
 
     // 15th and 16th byte (length)
