@@ -1,7 +1,7 @@
-import { Host, INETProtocol, V1ProxyProtocol } from 'proxy-protocol-js';
+import { Peer, INETProtocol, V1ProxyProtocol } from 'proxy-protocol-js';
 
-const src = new Host('127.0.0.1', 12345);
-const dst = new Host('192.0.2.1', 54321);
+const src = new Peer('127.0.0.1', 12345);
+const dst = new Peer('192.0.2.1', 54321);
 const protocolText = new V1ProxyProtocol(
   INETProtocol.TCP4,
   src,
