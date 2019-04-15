@@ -1,3 +1,4 @@
+import { AddressFamily } from '../enum/AddressFamily';
 import { ProxyAddress } from './ProxyAddress';
 
 export type UnixAddressTuple = [
@@ -235,8 +236,26 @@ export class UnixAddress {
 export class UnixProxyAddress implements ProxyAddress {
   constructor(readonly sourceAddress: UnixAddress, readonly destinationAddress: UnixAddress) {}
 
+  static from(d: Uint8Array): UnixProxyAddress {
+    const srcAddr = UnixAddress.createWithEmptyAddress();
+    for (let i = 0; i < 108; i++) {
+      srcAddr.address[i] = d[i];
+    }
+
+    const dstAddr = UnixAddress.createWithEmptyAddress();
+    for (let i = 0; i < 108; i++) {
+      dstAddr.address[i] = d[i + 108];
+    }
+
+    return new UnixProxyAddress(srcAddr, dstAddr);
+  }
+
   // for AF_UNIX sockets, len = 216
   getLength(): number {
-    return 216;
+    return AddressFamily.getLength(this.getAddressFamily());
+  }
+
+  getAddressFamily(): AddressFamily {
+    return AddressFamily.UNIX;
   }
 }

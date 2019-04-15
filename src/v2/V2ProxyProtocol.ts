@@ -3,8 +3,16 @@ import { Command } from './enum/Command';
 import { TransportProtocol } from './enum/TransportProtocol';
 import { IPv4ProxyAddress } from './proxy_address/IPv4ProxyAddress';
 import { IPv6ProxyAddress } from './proxy_address/IPv6ProxyAddress';
-import { ProxyAddress } from './proxy_address/ProxyAddress';
 import { UnixProxyAddress } from './proxy_address/UnixProxyAddress';
+import { UnspecProxyAddress } from './proxy_address/UnspecProxyAddress';
+
+export class V2ProxyProtocolParseError implements Error {
+  readonly name: string;
+
+  constructor(readonly message: string) {
+    this.name = this.constructor.name;
+  }
+}
 
 export class V2ProxyProtocol {
   private static readonly protocolSignature = new Uint8Array([
@@ -32,24 +40,9 @@ export class V2ProxyProtocol {
   constructor(
     readonly command: Command,
     readonly transportProtocol: TransportProtocol,
-    readonly proxyAddress: ProxyAddress,
+    readonly proxyAddress: IPv4ProxyAddress | IPv6ProxyAddress | UnixProxyAddress | UnspecProxyAddress,
   ) {
-    this.addressFamily = AddressFamily.UNSPEC;
-
-    if (proxyAddress instanceof IPv4ProxyAddress) {
-      this.addressFamily = AddressFamily.INET;
-      return;
-    }
-
-    if (proxyAddress instanceof IPv6ProxyAddress) {
-      this.addressFamily = AddressFamily.INET6;
-      return;
-    }
-
-    if (proxyAddress instanceof UnixProxyAddress) {
-      this.addressFamily = AddressFamily.UNIX;
-      return;
-    }
+    this.addressFamily = proxyAddress.getAddressFamily();
   }
 
   build(): Uint8Array {
@@ -112,6 +105,62 @@ export class V2ProxyProtocol {
     return proto;
   }
 
+  static parse(data: Uint8Array): V2ProxyProtocol {
+    if (!this.hasProtocolSignature(data)) {
+      throw new V2ProxyProtocolParseError("given binary doesn't have v2 PROXY protocol's signature");
+    }
+
+    let cursor = this.protocolSignatureLength;
+
+    // 13rd byte
+    const versionAndCommandByte = data[cursor++];
+    if (versionAndCommandByte === undefined) {
+      throw new V2ProxyProtocolParseError("given binary doesn't have a byte for version and command (13rd byte)");
+    }
+    const versionAndCommand = this.separate8bit(versionAndCommandByte);
+    if (versionAndCommand[0] !== this.protocolVersion) {
+      throw new V2ProxyProtocolParseError('given protocol version is invalid');
+    }
+    const command = Command[Command[versionAndCommand[1]]];
+    if (command === undefined) {
+      throw new V2ProxyProtocolParseError('given protocol command is invalid');
+    }
+
+    // 14th byte
+    const afAndTransportProtocolByte = data[cursor++];
+    if (afAndTransportProtocolByte === undefined) {
+      throw new V2ProxyProtocolParseError(
+        "given binary doesn't have a byte for address family and transport protocol (14th byte)",
+      );
+    }
+    const afAndTransportProtocol = this.separate8bit(afAndTransportProtocolByte);
+    const addressFamily = AddressFamily[AddressFamily[afAndTransportProtocol[0]]];
+    if (addressFamily === undefined) {
+      throw new V2ProxyProtocolParseError('given protocol address family is invalid');
+    }
+    const transportProtocol = TransportProtocol[TransportProtocol[afAndTransportProtocol[1]]];
+    if (transportProtocol === undefined) {
+      throw new V2ProxyProtocolParseError('given transport protocol family is invalid');
+    }
+
+    // 15th and 16th byte (length)
+    const upperLengthByte = data[cursor++];
+    const lowerLengthByte = data[cursor];
+    if (upperLengthByte === undefined || lowerLengthByte === undefined) {
+      throw new V2ProxyProtocolParseError("given binary doesn't have bytes for specifying length");
+    }
+    const length = (upperLengthByte << 8) + lowerLengthByte;
+    if (length !== AddressFamily.getLength(addressFamily)) {
+      throw new V2ProxyProtocolParseError("given specified length and address family's length are mismatched");
+    }
+
+    return new V2ProxyProtocol(
+      command,
+      transportProtocol,
+      AddressFamily.getFactoryMethod(addressFamily)(data.slice(16)),
+    );
+  }
+
   private initHeader(): Uint8Array {
     const proto = new Uint8Array(
       this.proxyAddress.getLength() + V2ProxyProtocol.protocolSignatureLength + V2ProxyProtocol.protocolMetaLength,
@@ -145,5 +194,20 @@ export class V2ProxyProtocol {
     const high = num >> 8;
     const low = num - masked;
     return [high, low];
+  }
+
+  private static separate8bit(num: number): [number, number] {
+    const high = num & 0xf0;
+    const low = num - high;
+    return [high, low];
+  }
+
+  private static hasProtocolSignature(given: Uint8Array) {
+    for (let i = 0; i < V2ProxyProtocol.protocolSignatureLength; i++) {
+      if (given[i] !== V2ProxyProtocol.protocolSignature[i]) {
+        return false;
+      }
+    }
+    return true;
   }
 }

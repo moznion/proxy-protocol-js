@@ -1,6 +1,5 @@
 import { AddressFamily } from '../enum/AddressFamily';
-
 export interface ProxyAddress {
-  getLength(): number;
-  getAddressFamily(): AddressFamily;
+    getLength(): number;
+    getAddressFamily(): AddressFamily;
 }
