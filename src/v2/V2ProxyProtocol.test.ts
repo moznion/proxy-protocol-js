@@ -656,8 +656,8 @@ test("should fail parsing when specified length and address family's length are 
     10, //  <= end of the protocol signature
     32, //  <= version (0x20) | command (LOCAL:0x00)
     18, //  <= address-family (INET:0x10) | transport-proto (DGRAM:0x02)
-    255, //   <= length of remaining (upper) : invalid!!!
-    255, //  <= length of remaining (lower)  : invalid!!!
+    0, //   <= length of remaining (upper) : invalid!!!
+    11, //  <= length of remaining (lower) : invalid!!!
     127, // <= start of source address
     0, //   ^
     0, //   v
@@ -674,5 +674,5 @@ test("should fail parsing when specified length and address family's length are 
 
   expect(() => {
     V2ProxyProtocol.parse(bin);
-  }).toThrowError(new V2ProxyProtocolParseError("given specified length and address family's length are mismatched"));
+  }).toThrowError(new V2ProxyProtocolParseError("given specified length is shorter than address family's length"));
 });

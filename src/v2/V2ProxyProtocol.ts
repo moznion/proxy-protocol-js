@@ -150,8 +150,8 @@ export class V2ProxyProtocol {
       throw new V2ProxyProtocolParseError("given binary doesn't have bytes for specifying length");
     }
     const length = (upperLengthByte << 8) + lowerLengthByte;
-    if (length !== AddressFamily.getLength(addressFamily)) {
-      throw new V2ProxyProtocolParseError("given specified length and address family's length are mismatched");
+    if (length < AddressFamily.getLength(addressFamily)) {
+      throw new V2ProxyProtocolParseError("given specified length is shorter than address family's length");
     }
 
     return new V2ProxyProtocol(
