@@ -1,3 +1,4 @@
+import { TextDecoder } from 'util';
 import { INETProtocol } from './enum/INETProtocol';
 import { Peer } from './Peer';
 
@@ -20,7 +21,14 @@ export class V1ProxyProtocol {
     }\r\n${this.data ? this.data : ''}`;
   }
 
-  static parse(text: string): V1ProxyProtocol | null {
+  static parse(input: string | Uint8Array): V1ProxyProtocol | null {
+    let text: string;
+    if (typeof input === 'string') {
+      text = input;
+    } else {
+      text = new TextDecoder().decode(input);
+    }
+
     const matched = V1ProxyProtocol.v1ProxyProtocolRegexp.exec(text);
     if (!matched) {
       return null;
