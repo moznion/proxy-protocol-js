@@ -3,6 +3,12 @@ proxy-protocol-js [![CircleCI](https://circleci.com/gh/moznion/proxy-protocol-js
 
 A PROXY protocol builder and parser for JavaScript
 
+Features
+--
+
+- Supports both of V1 and V2 protocol
+- Supports TypeScript
+
 Usage
 --
 
@@ -69,11 +75,6 @@ console.log(proto);
 //      destination: Host { ipAddress: '192.0.2.1', port: 54321 },
 //      data: '' }
 ```
-
-Todo
---
-
-- [ ] V2 PROXY protocol support
 
 Author
 --
