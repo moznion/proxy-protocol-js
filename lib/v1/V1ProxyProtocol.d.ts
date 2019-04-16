@@ -4,9 +4,8 @@ export declare class V1ProxyProtocol {
     readonly inetProtocol: INETProtocol;
     readonly source: Peer;
     readonly destination: Peer;
-    readonly data?: string | undefined;
     private static readonly v1ProxyProtocolRegexp;
-    constructor(inetProtocol: INETProtocol, source: Peer, destination: Peer, data?: string | undefined);
+    constructor(inetProtocol: INETProtocol, source: Peer, destination: Peer);
     build(): string;
     static parse(input: string | Uint8Array): V1ProxyProtocol | null;
 }
