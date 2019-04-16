@@ -28,5 +28,5 @@ export declare class V2ProxyProtocol {
     private unionAddressFamilyAndTransportProtocol;
     private static separate32bitTo16bitPair;
     private static separate8bit;
-    private static hasProtocolSignature;
+    static isValidProtocolSignature(given: Uint8Array): boolean;
 }

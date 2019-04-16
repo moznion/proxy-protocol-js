@@ -10,3 +10,5 @@ export { UnspecProxyAddress } from './v2/proxy_address/UnspecProxyAddress';
 export { IPv6AddressTuple, IPv6Address, IPv6ProxyAddress } from './v2/proxy_address/IPv6ProxyAddress';
 export { IPv4AddressTuple, IPv4Address, IPv4ProxyAddress } from './v2/proxy_address/IPv4ProxyAddress';
 export { V2ProxyProtocol } from './v2/V2ProxyProtocol';
+export { ProxyProtocolVersion } from './ProxyProtocolVersion';
+export { ProxyProtocolIdentifier } from './ProxyProtocolIdentifier';

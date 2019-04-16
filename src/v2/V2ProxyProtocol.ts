@@ -106,7 +106,7 @@ export class V2ProxyProtocol {
   }
 
   static parse(data: Uint8Array): V2ProxyProtocol {
-    if (!this.hasProtocolSignature(data)) {
+    if (!this.isValidProtocolSignature(data)) {
       throw new V2ProxyProtocolParseError("given binary doesn't have v2 PROXY protocol's signature");
     }
 
@@ -202,7 +202,7 @@ export class V2ProxyProtocol {
     return [high, low];
   }
 
-  private static hasProtocolSignature(given: Uint8Array) {
+  static isValidProtocolSignature(given: Uint8Array): boolean {
     for (let i = 0; i < V2ProxyProtocol.protocolSignatureLength; i++) {
       if (given[i] !== V2ProxyProtocol.protocolSignature[i]) {
         return false;
