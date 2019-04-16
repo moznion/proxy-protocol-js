@@ -1,9 +1,15 @@
-import { V2ProxyProtocol, V2ProxyProtocolParseError } from './V2ProxyProtocol';
-import { Command } from './enum/Command';
-import { TransportProtocol } from './enum/TransportProtocol';
-import { IPv4Address, IPv4ProxyAddress } from './proxy_address/IPv4ProxyAddress';
-import { IPv6Address, IPv6ProxyAddress } from './proxy_address/IPv6ProxyAddress';
-import { UnixAddress, UnixProxyAddress } from './proxy_address/UnixProxyAddress';
+import {
+  V2ProxyProtocol,
+  V2ProxyProtocolParseError,
+  Command,
+  TransportProtocol,
+  IPv4Address,
+  IPv4ProxyAddress,
+  IPv6Address,
+  IPv6ProxyAddress,
+  UnixAddress,
+  UnixProxyAddress,
+} from '../proxy-protocol';
 
 test('should build and parse V2 proxy protocol with IPv4 successfully', async () => {
   const proto = new V2ProxyProtocol(

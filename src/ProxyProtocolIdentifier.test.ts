@@ -1,6 +1,5 @@
-import { ProxyProtocolIdentifier } from './ProxyProtocolIdentifier';
+import { ProxyProtocolIdentifier, ProxyProtocolVersion } from './proxy-protocol';
 import { TextEncoder } from 'util';
-import { ProxyProtocolVersion } from './ProxyProtocolVersion';
 
 test('is V1 protocol with string', async () => {
   expect(ProxyProtocolIdentifier.identify('PROXY TCP4 127.0.0.1 192.0.2.1 12345 54321\r\n')).toBe(

@@ -1,8 +1,10 @@
-import { AddressFamily } from './AddressFamily';
-import { IPv4ProxyAddress } from '../proxy_address/IPv4ProxyAddress';
-import { IPv6ProxyAddress } from '../proxy_address/IPv6ProxyAddress';
-import { UnixProxyAddress } from '../proxy_address/UnixProxyAddress';
-import { UnspecProxyAddress } from '../proxy_address/UnspecProxyAddress';
+import {
+  AddressFamily,
+  IPv4ProxyAddress,
+  IPv6ProxyAddress,
+  UnixProxyAddress,
+  UnspecProxyAddress,
+} from '../../proxy-protocol';
 
 test('should getLength() returns exactly value for each AddressFamily', async () => {
   expect(AddressFamily.getLength(AddressFamily.INET)).toBe(12);

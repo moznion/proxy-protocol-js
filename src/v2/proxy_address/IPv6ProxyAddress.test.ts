@@ -1,4 +1,4 @@
-import { IPv6Address } from './IPv6ProxyAddress';
+import { IPv6Address } from '../../proxy-protocol';
 
 test('should create IPv6Address from an array', async () => {
   expect(IPv6Address.createFrom([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])).toEqual(

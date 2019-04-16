@@ -1,4 +1,4 @@
-import { IPv4Address } from './IPv4ProxyAddress';
+import { IPv4Address } from '../../proxy-protocol';
 
 test('should create IPv4Address from an array', async () => {
   expect(IPv4Address.createFrom([1, 2, 3, 4])).toEqual(new IPv4Address([1, 2, 3, 4]));

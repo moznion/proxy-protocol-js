@@ -1,6 +1,4 @@
-import { Peer } from './Peer';
-import { INETProtocol } from './enum/INETProtocol';
-import { V1ProxyProtocol } from './V1ProxyProtocol';
+import { Peer, INETProtocol, V1ProxyProtocol } from '../proxy-protocol';
 import { TextEncoder } from 'util';
 
 test('should build V1 PROXY protocol with data successfully', async () => {

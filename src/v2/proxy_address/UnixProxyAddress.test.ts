@@ -1,4 +1,4 @@
-import { UnixAddress } from './UnixProxyAddress';
+import { UnixAddress } from '../../proxy-protocol';
 
 test('should create UnixAddress from an array', async () => {
   expect(

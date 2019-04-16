@@ -1,4 +1,4 @@
-import { UnspecProxyAddress } from './UnspecProxyAddress';
+import { UnspecProxyAddress } from '../../proxy-protocol';
 
 test('should getLength() returns 0', async () => {
   const proxyAddress = UnspecProxyAddress.from(new Uint8Array(0));
