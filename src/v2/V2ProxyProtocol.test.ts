@@ -16,6 +16,7 @@ test('should build and parse V2 proxy protocol with IPv4 successfully', async ()
     Command.LOCAL,
     TransportProtocol.DGRAM,
     new IPv4ProxyAddress(IPv4Address.createFrom([127, 0, 0, 1]), 12345, IPv4Address.createFrom([192, 0, 2, 1]), 54321),
+    new Uint8Array([]),
   );
   const expectedBin = new Uint8Array([
     13, //  <= start of the protocol signature
@@ -46,6 +47,51 @@ test('should build and parse V2 proxy protocol with IPv4 successfully', async ()
     57, //  <= src port (lower)
     212, // <= dst port (upper)
     49, //  <= dst port (lower)
+  ]);
+  const got = proto.build();
+  expect(got).toEqual(expectedBin);
+  expect(V2ProxyProtocol.parse(got)).toEqual(proto);
+});
+
+test('should build and parse V2 proxy protocol with extra data successfully', async () => {
+  const proto = new V2ProxyProtocol(
+    Command.LOCAL,
+    TransportProtocol.DGRAM,
+    new IPv4ProxyAddress(IPv4Address.createFrom([127, 0, 0, 1]), 12345, IPv4Address.createFrom([192, 0, 2, 1]), 54321),
+    new Uint8Array([255, 254, 253]),
+  );
+  const expectedBin = new Uint8Array([
+    13, //  <= start of the protocol signature
+    10, //  ^
+    13, //  |
+    10, //  |
+    0, //   |
+    13, //  |
+    10, //  |
+    81, //  |
+    85, //  |
+    73, //  |
+    84, //  v
+    10, //  <= end of the protocol signature
+    32, //  <= version (0x20) | command (LOCAL:0x00)
+    18, //  <= address-family (INET:0x10) | transport-proto (DGRAM:0x02)
+    0, //   <= length of remaining (upper)
+    12, //  <= length of remaining (lower)
+    127, // <= start of source address
+    0, //   ^
+    0, //   v
+    1, //   <= end of source address
+    192, // <= start of destination address
+    0, //   ^
+    2, //   v
+    1, //   <= end of destination address
+    48, //  <= src port (upper)
+    57, //  <= src port (lower)
+    212, // <= dst port (upper)
+    49, //  <= dst port (lower)
+    255, // <= extra data
+    254, // <= extra data
+    253, // <= extra data
   ]);
   const got = proto.build();
   expect(got).toEqual(expectedBin);
@@ -96,6 +142,7 @@ test('should build V2 proxy protocol with IPv6 successfully', async () => {
       ]),
       21,
     ),
+    new Uint8Array([]),
   );
   const expectedBin = new Uint8Array([
     13, //  <= start of the protocol signature
@@ -176,6 +223,7 @@ test('should build V2 proxy protocol with UNIX address successfully', async () =
     Command.LOCAL,
     TransportProtocol.DGRAM,
     new UnixProxyAddress(srcUnixAddr, dstUnixAddr),
+    new Uint8Array([]),
   );
   const expectedBin = new Uint8Array([
     13, //   <= start of the protocol signature

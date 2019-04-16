@@ -6,7 +6,10 @@ export class V1ProxyProtocol {
   private static readonly protocolSignature = 'PROXY';
   private static readonly v1ProxyProtocolRegexp = (() => {
     const inetProtoMatcher = Object.keys(INETProtocol).join('|');
-    return new RegExp(`^${V1ProxyProtocol.protocolSignature} (${inetProtoMatcher}) ([^ ]+) ([^ ]+) ([0-9]+) ([0-9]+)\r\n(.*)`, 's');
+    return new RegExp(
+      `^${V1ProxyProtocol.protocolSignature} (${inetProtoMatcher}) ([^ ]+) ([^ ]+) ([0-9]+) ([0-9]+)\r\n(.*)`,
+      's',
+    );
   })();
 
   constructor(

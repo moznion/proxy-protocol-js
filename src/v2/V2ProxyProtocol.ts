@@ -41,12 +41,13 @@ export class V2ProxyProtocol {
     readonly command: Command,
     readonly transportProtocol: TransportProtocol,
     readonly proxyAddress: IPv4ProxyAddress | IPv6ProxyAddress | UnixProxyAddress | UnspecProxyAddress,
+    readonly data?: Uint8Array,
   ) {
     this.addressFamily = proxyAddress.getAddressFamily();
   }
 
   build(): Uint8Array {
-    const proto = this.initHeader();
+    const proto = this.initProto();
     let cursor = V2ProxyProtocol.initialHeaderOffset;
 
     if (this.addressFamily === AddressFamily.INET && this.proxyAddress instanceof IPv4ProxyAddress) {
@@ -64,12 +65,8 @@ export class V2ProxyProtocol {
 
       const dstPort = V2ProxyProtocol.separate32bitTo16bitPair(this.proxyAddress.destinationPort);
       proto[cursor++] = dstPort[0];
-      proto[cursor] = dstPort[1];
-
-      return proto;
-    }
-
-    if (this.addressFamily === AddressFamily.INET6 && this.proxyAddress instanceof IPv6ProxyAddress) {
+      proto[cursor++] = dstPort[1];
+    } else if (this.addressFamily === AddressFamily.INET6 && this.proxyAddress instanceof IPv6ProxyAddress) {
       for (let i = 0; i < 16; i++) {
         proto[cursor++] = this.proxyAddress.sourceAddress.address[i];
       }
@@ -84,12 +81,8 @@ export class V2ProxyProtocol {
 
       const dstPort = V2ProxyProtocol.separate32bitTo16bitPair(this.proxyAddress.destinationPort);
       proto[cursor++] = dstPort[0];
-      proto[cursor] = dstPort[1];
-
-      return proto;
-    }
-
-    if (this.addressFamily === AddressFamily.UNIX && this.proxyAddress instanceof UnixProxyAddress) {
+      proto[cursor++] = dstPort[1];
+    } else if (this.addressFamily === AddressFamily.UNIX && this.proxyAddress instanceof UnixProxyAddress) {
       for (let i = 0; i < 108; i++) {
         proto[cursor++] = this.proxyAddress.sourceAddress.address[i];
       }
@@ -97,23 +90,27 @@ export class V2ProxyProtocol {
       for (let i = 0; i < 108; i++) {
         proto[cursor++] = this.proxyAddress.destinationAddress.address[i];
       }
-
-      return proto;
     }
 
-    // NOTE: unreachable
+    if (this.data) {
+      const dataLen = this.data.length;
+      for (let i = 0; i < dataLen; i++) {
+        proto[cursor++] = this.data[i];
+      }
+    }
+
     return proto;
   }
 
-  static parse(data: Uint8Array): V2ProxyProtocol {
-    if (!this.isValidProtocolSignature(data)) {
+  static parse(input: Uint8Array): V2ProxyProtocol {
+    if (!this.isValidProtocolSignature(input)) {
       throw new V2ProxyProtocolParseError("given binary doesn't have v2 PROXY protocol's signature");
     }
 
     let cursor = this.protocolSignatureLength;
 
     // 13rd byte
-    const versionAndCommandByte = data[cursor++];
+    const versionAndCommandByte = input[cursor++];
     if (versionAndCommandByte === undefined) {
       throw new V2ProxyProtocolParseError("given binary doesn't have a byte for version and command (13rd byte)");
     }
@@ -127,7 +124,7 @@ export class V2ProxyProtocol {
     }
 
     // 14th byte
-    const afAndTransportProtocolByte = data[cursor++];
+    const afAndTransportProtocolByte = input[cursor++];
     if (afAndTransportProtocolByte === undefined) {
       throw new V2ProxyProtocolParseError(
         "given binary doesn't have a byte for address family and transport protocol (14th byte)",
@@ -144,26 +141,31 @@ export class V2ProxyProtocol {
     }
 
     // 15th and 16th byte (length)
-    const upperLengthByte = data[cursor++];
-    const lowerLengthByte = data[cursor];
+    const upperLengthByte = input[cursor++];
+    const lowerLengthByte = input[cursor];
     if (upperLengthByte === undefined || lowerLengthByte === undefined) {
       throw new V2ProxyProtocolParseError("given binary doesn't have bytes for specifying length");
     }
     const length = (upperLengthByte << 8) + lowerLengthByte;
-    if (length < AddressFamily.getLength(addressFamily)) {
+    const addressFamilyLength = AddressFamily.getLength(addressFamily);
+    if (length < addressFamilyLength) {
       throw new V2ProxyProtocolParseError("given specified length is shorter than address family's length");
     }
 
     return new V2ProxyProtocol(
       command,
       transportProtocol,
-      AddressFamily.getFactoryMethod(addressFamily)(data.slice(16)),
+      AddressFamily.getFactoryMethod(addressFamily)(input.slice(16)),
+      input.slice(addressFamilyLength + 16),
     );
   }
 
-  private initHeader(): Uint8Array {
+  private initProto(): Uint8Array {
     const proto = new Uint8Array(
-      this.proxyAddress.getLength() + V2ProxyProtocol.protocolSignatureLength + V2ProxyProtocol.protocolMetaLength,
+      this.proxyAddress.getLength() +
+        V2ProxyProtocol.protocolSignatureLength +
+        V2ProxyProtocol.protocolMetaLength +
+        (this.data ? this.data.length : 0),
     );
 
     let cursor = 0;
