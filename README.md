@@ -7,7 +7,7 @@ Features
 --
 
 - Supports the features
-  - building PROXY protocol payload 
+  - building PROXY protocol payload
   - parsing PROXY protocol payload
   - identifying the PROXY protocol version
 - Supports both of the version: V1 and V2 protocol
