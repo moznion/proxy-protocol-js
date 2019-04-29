@@ -2,6 +2,9 @@ import { TextDecoder } from 'util';
 import { INETProtocol } from './enum/INETProtocol';
 import { Peer } from './Peer';
 
+/**
+ * V1ProxyProtocol is a class that has responsibilities for building and parsing PROXY protocol V1.
+ */
 export class V1ProxyProtocol {
   private static readonly protocolSignature = 'PROXY';
   private static readonly v1ProxyProtocolRegexp = (() => {
@@ -12,6 +15,14 @@ export class V1ProxyProtocol {
     );
   })();
 
+  /**
+   * The constructor to instantiate an instance of V1ProxyProtocol class.
+   *
+   * @param inetProtocol
+   * @param source
+   * @param destination
+   * @param data
+   */
   constructor(
     readonly inetProtocol: INETProtocol,
     readonly source: Peer,
@@ -19,12 +30,24 @@ export class V1ProxyProtocol {
     readonly data?: string,
   ) {}
 
+  /**
+   * Constructs a V1 PROXY protocol header.
+   *
+   * If the instance has data payload, this method appends data into the after of the header.
+   */
   build(): string {
     return `PROXY ${this.inetProtocol} ${this.source.ipAddress} ${this.destination.ipAddress} ${this.source.port} ${
       this.destination.port
     }\r\n${this.data ? this.data : ''}`;
   }
 
+  /**
+   * Parses a given input string as V1 PROXY protocol and returns the structure.
+   *
+   * If the given string is invalid, this method returns null as the result.
+   *
+   * @param input
+   */
   static parse(input: string | Uint8Array): V1ProxyProtocol | null {
     const matched = V1ProxyProtocol.v1ProxyProtocolRegexp.exec(this.normalizeToString(input));
     if (!matched) {
@@ -39,6 +62,11 @@ export class V1ProxyProtocol {
     );
   }
 
+  /**
+   * Returns the whether a given input string has a valid protocol signature or not.
+   *
+   * @param input
+   */
   static isValidProtocolSignature(input: string | Uint8Array): boolean {
     return V1ProxyProtocol.normalizeToString(input).startsWith(V1ProxyProtocol.protocolSignature);
   }

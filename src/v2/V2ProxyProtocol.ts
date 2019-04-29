@@ -6,6 +6,9 @@ import { IPv6ProxyAddress } from './proxy_address/IPv6ProxyAddress';
 import { UnixProxyAddress } from './proxy_address/UnixProxyAddress';
 import { UnspecProxyAddress } from './proxy_address/UnspecProxyAddress';
 
+/**
+ * V2ProxyProtocolParseError is an error class that is raised on parsing error occurs.
+ */
 export class V2ProxyProtocolParseError implements Error {
   readonly name: string;
 
@@ -14,6 +17,9 @@ export class V2ProxyProtocolParseError implements Error {
   }
 }
 
+/**
+ * V2ProxyProtocol is a class that has responsibilities for building and parsing PROXY protocol V2.
+ */
 export class V2ProxyProtocol {
   private static readonly protocolSignature = new Uint8Array([
     0x0d,
@@ -46,6 +52,11 @@ export class V2ProxyProtocol {
     this.addressFamilyType = proxyAddress.getAddressFamilyType();
   }
 
+  /**
+   * Constructs a V2 PROXY protocol header.
+   *
+   * If the instance has data payload, this method appends data into the after of the header.
+   */
   build(): Uint8Array {
     const proto = this.initProto();
     let cursor = V2ProxyProtocol.initialHeaderOffset;
@@ -102,6 +113,13 @@ export class V2ProxyProtocol {
     return proto;
   }
 
+  /**
+   * Parses a given input string as V2 PROXY protocol and returns the structure.
+   *
+   * If the given string is invalid, this method throws {@link V2ProxyProtocolParseError}.
+   *
+   * @param input
+   */
   static parse(input: Uint8Array): V2ProxyProtocol {
     if (!this.isValidProtocolSignature(input)) {
       throw new V2ProxyProtocolParseError("given binary doesn't have v2 PROXY protocol's signature");
@@ -205,9 +223,14 @@ export class V2ProxyProtocol {
     return [high, low];
   }
 
-  static isValidProtocolSignature(given: Uint8Array): boolean {
+  /**
+   * Returns the whether a given input string has a valid protocol signature or not.
+   *
+   * @param input
+   */
+  static isValidProtocolSignature(input: Uint8Array): boolean {
     for (let i = 0; i < V2ProxyProtocol.protocolSignatureLength; i++) {
-      if (given[i] !== V2ProxyProtocol.protocolSignature[i]) {
+      if (input[i] !== V2ProxyProtocol.protocolSignature[i]) {
         return false;
       }
     }

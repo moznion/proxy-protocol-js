@@ -1,6 +1,11 @@
 import { AddressFamily, AddressFamilyType } from '../enum/AddressFamily';
 import { ProxyAddress } from './ProxyAddress';
 
+/**
+ * IPv6AddressTuple is a type that represents the IPv6.
+ *
+ * example: [0x20, 0x01, 0xdb, 0x08, 0xff, 0xff 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]
+ */
 export type IPv6AddressTuple = [
   number,
   number,
@@ -20,9 +25,17 @@ export type IPv6AddressTuple = [
   number // 16 numbers (uint8)
 ];
 
+/**
+ * IPv6Address represents the address for IPv6.
+ */
 export class IPv6Address {
   constructor(readonly address: IPv6AddressTuple) {}
 
+  /**
+   * Factory method for IPv6Address class by an argument as a list of number.
+   *
+   * @param address
+   */
   static createFrom(address: number[]): IPv6Address {
     return new IPv6Address([
       address[0] || 0,
@@ -44,11 +57,19 @@ export class IPv6Address {
     ]);
   }
 
+  /**
+   * Create a new IPv6Address's instance with empty address.
+   */
   static createWithEmptyAddress(): IPv6Address {
     return IPv6Address.createFrom([]);
   }
 }
 
+/**
+ * IPv6ProxyAddress has responsibilities of {@link ProxyAddress} for IPv6.
+ *
+ * It has source address information and destination address information.
+ */
 export class IPv6ProxyAddress implements ProxyAddress {
   constructor(
     readonly sourceAddress: IPv6Address,
@@ -57,54 +78,65 @@ export class IPv6ProxyAddress implements ProxyAddress {
     readonly destinationPort: number, // uint16_t
   ) {}
 
-  static from(d: Uint8Array): IPv6ProxyAddress {
+  /**
+   * Factory method to construct an instance by a list of binary codes.
+   *
+   * @param data is a list of binary codes to construct an instance.
+   */
+  static from(data: Uint8Array): IPv6ProxyAddress {
     return new IPv6ProxyAddress(
       new IPv6Address([
-        d[0],
-        d[1],
-        d[2],
-        d[3],
-        d[4],
-        d[5],
-        d[6],
-        d[7],
-        d[8],
-        d[9],
-        d[10],
-        d[11],
-        d[12],
-        d[13],
-        d[14],
-        d[15],
+        data[0],
+        data[1],
+        data[2],
+        data[3],
+        data[4],
+        data[5],
+        data[6],
+        data[7],
+        data[8],
+        data[9],
+        data[10],
+        data[11],
+        data[12],
+        data[13],
+        data[14],
+        data[15],
       ]),
-      (d[32] << 8) + d[33],
+      (data[32] << 8) + data[33],
       new IPv6Address([
-        d[16],
-        d[17],
-        d[18],
-        d[19],
-        d[20],
-        d[21],
-        d[22],
-        d[23],
-        d[24],
-        d[25],
-        d[26],
-        d[27],
-        d[28],
-        d[29],
-        d[30],
-        d[31],
+        data[16],
+        data[17],
+        data[18],
+        data[19],
+        data[20],
+        data[21],
+        data[22],
+        data[23],
+        data[24],
+        data[25],
+        data[26],
+        data[27],
+        data[28],
+        data[29],
+        data[30],
+        data[31],
       ]),
-      (d[34] << 8) + d[35],
+      (data[34] << 8) + data[35],
     );
   }
 
-  // for TCP/UDP over IPv6, len = 36
+  /**
+   * {@inheritdoc}
+   */
   getLength(): number {
+    // for TCP/UDP over IPv6, len = 36
     return new AddressFamily(this.getAddressFamilyType()).getLength();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   getAddressFamilyType(): AddressFamilyType {
     return AddressFamilyType.INET6;
   }

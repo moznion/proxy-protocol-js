@@ -9,3 +9,5 @@ const protocolText = new proxyProtocol.V1ProxyProtocol(
 ).build();
 console.log(protocolText); // => PROXY TCP4 127.0.0.1 192.0.2.1 12345 54321\r\n
 
+const identifiedProtocolVersion = proxyProtocol.ProxyProtocolIdentifier.identify(protocolText);
+console.log(identifiedProtocolVersion); // => proxyProtocol.ProxyProtocolVersion.V1 (= 0xx10)
