@@ -89,3 +89,6 @@ typings/
 .idea/
 
 coverage/
+
+/lib/*
+!/lib/.gitkeep
