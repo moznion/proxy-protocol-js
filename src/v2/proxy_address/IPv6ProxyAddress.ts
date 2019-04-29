@@ -1,4 +1,4 @@
-import { AddressFamily } from '../enum/AddressFamily';
+import { AddressFamily, AddressFamilyType } from '../enum/AddressFamily';
 import { ProxyAddress } from './ProxyAddress';
 
 export type IPv6AddressTuple = [
@@ -102,10 +102,10 @@ export class IPv6ProxyAddress implements ProxyAddress {
 
   // for TCP/UDP over IPv6, len = 36
   getLength(): number {
-    return AddressFamily.getLength(this.getAddressFamily());
+    return new AddressFamily(this.getAddressFamilyType()).getLength();
   }
 
-  getAddressFamily(): AddressFamily {
-    return AddressFamily.INET6;
+  getAddressFamilyType(): AddressFamilyType {
+    return AddressFamilyType.INET6;
   }
 }

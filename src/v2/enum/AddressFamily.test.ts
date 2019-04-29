@@ -5,17 +5,18 @@ import {
   UnixProxyAddress,
   UnspecProxyAddress,
 } from '../../proxy-protocol';
+import { AddressFamilyType } from './AddressFamily';
 
 test('should getLength() returns exactly value for each AddressFamily', async () => {
-  expect(AddressFamily.getLength(AddressFamily.INET)).toBe(12);
-  expect(AddressFamily.getLength(AddressFamily.INET6)).toBe(36);
-  expect(AddressFamily.getLength(AddressFamily.UNIX)).toBe(216);
-  expect(AddressFamily.getLength(AddressFamily.UNSPEC)).toBe(0);
+  expect(new AddressFamily(AddressFamilyType.INET).getLength()).toBe(12);
+  expect(new AddressFamily(AddressFamilyType.INET6).getLength()).toBe(36);
+  expect(new AddressFamily(AddressFamilyType.UNIX).getLength()).toBe(216);
+  expect(new AddressFamily(AddressFamilyType.UNSPEC).getLength()).toBe(0);
 });
 
 test('should getFactoryMethod() returns exactly value for each AddressFamily', async () => {
-  expect(AddressFamily.getFactoryMethod(AddressFamily.INET)).toBe(IPv4ProxyAddress.from);
-  expect(AddressFamily.getFactoryMethod(AddressFamily.INET6)).toBe(IPv6ProxyAddress.from);
-  expect(AddressFamily.getFactoryMethod(AddressFamily.UNIX)).toBe(UnixProxyAddress.from);
-  expect(AddressFamily.getFactoryMethod(AddressFamily.UNSPEC)).toBe(UnspecProxyAddress.from);
+  expect(new AddressFamily(AddressFamilyType.INET).getFactoryMethod()).toBe(IPv4ProxyAddress.from);
+  expect(new AddressFamily(AddressFamilyType.INET6).getFactoryMethod()).toBe(IPv6ProxyAddress.from);
+  expect(new AddressFamily(AddressFamilyType.UNIX).getFactoryMethod()).toBe(UnixProxyAddress.from);
+  expect(new AddressFamily(AddressFamilyType.UNSPEC).getFactoryMethod()).toBe(UnspecProxyAddress.from);
 });

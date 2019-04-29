@@ -1,4 +1,4 @@
-import { AddressFamily } from '../enum/AddressFamily';
+import { AddressFamily, AddressFamilyType } from '../enum/AddressFamily';
 import { ProxyAddress } from './ProxyAddress';
 
 export class UnspecProxyAddress implements ProxyAddress {
@@ -9,10 +9,10 @@ export class UnspecProxyAddress implements ProxyAddress {
   }
 
   getLength(): number {
-    return AddressFamily.getLength(this.getAddressFamily());
+    return new AddressFamily(this.getAddressFamilyType()).getLength();
   }
 
-  getAddressFamily(): AddressFamily {
-    return AddressFamily.UNSPEC;
+  getAddressFamilyType(): AddressFamilyType {
+    return AddressFamilyType.UNSPEC;
   }
 }

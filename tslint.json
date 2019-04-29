@@ -29,7 +29,7 @@
     "no-default-export": true,
     "no-duplicate-variable": true,
     "no-inferrable-types": true,
-    "no-namespace": [false],
+    "no-namespace": [true],
     "no-reference": true,
     "no-string-throw": true,
     "no-unused-expression": true,

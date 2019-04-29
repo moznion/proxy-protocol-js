@@ -1,4 +1,4 @@
-import { AddressFamily } from '../enum/AddressFamily';
+import { AddressFamily, AddressFamilyType } from '../enum/AddressFamily';
 import { ProxyAddress } from './ProxyAddress';
 
 export type IPv4AddressTuple = [number, number, number, number];
@@ -34,10 +34,10 @@ export class IPv4ProxyAddress implements ProxyAddress {
 
   // for TCP/UDP over IPv4, len = 12
   getLength(): number {
-    return AddressFamily.getLength(this.getAddressFamily());
+    return new AddressFamily(this.getAddressFamilyType()).getLength();
   }
 
-  getAddressFamily(): AddressFamily {
-    return AddressFamily.INET;
+  getAddressFamilyType(): AddressFamilyType {
+    return AddressFamilyType.INET;
   }
 }

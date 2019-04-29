@@ -1,4 +1,4 @@
-import { AddressFamily } from './enum/AddressFamily';
+import { AddressFamily, AddressFamilyType } from './enum/AddressFamily';
 import { Command } from './enum/Command';
 import { TransportProtocol } from './enum/TransportProtocol';
 import { IPv4ProxyAddress } from './proxy_address/IPv4ProxyAddress';
@@ -35,7 +35,7 @@ export class V2ProxyProtocol {
   private static readonly initialHeaderOffset =
     V2ProxyProtocol.protocolSignatureLength + V2ProxyProtocol.protocolMetaLength;
 
-  readonly addressFamily: AddressFamily;
+  readonly addressFamilyType: AddressFamilyType;
 
   constructor(
     readonly command: Command,
@@ -43,14 +43,14 @@ export class V2ProxyProtocol {
     readonly proxyAddress: IPv4ProxyAddress | IPv6ProxyAddress | UnixProxyAddress | UnspecProxyAddress,
     readonly data?: Uint8Array,
   ) {
-    this.addressFamily = proxyAddress.getAddressFamily();
+    this.addressFamilyType = proxyAddress.getAddressFamilyType();
   }
 
   build(): Uint8Array {
     const proto = this.initProto();
     let cursor = V2ProxyProtocol.initialHeaderOffset;
 
-    if (this.addressFamily === AddressFamily.INET && this.proxyAddress instanceof IPv4ProxyAddress) {
+    if (this.addressFamilyType === AddressFamilyType.INET && this.proxyAddress instanceof IPv4ProxyAddress) {
       for (let i = 0; i < 4; i++) {
         proto[cursor++] = this.proxyAddress.sourceAddress.address[i];
       }
@@ -66,7 +66,7 @@ export class V2ProxyProtocol {
       const dstPort = V2ProxyProtocol.separate32bitTo16bitPair(this.proxyAddress.destinationPort);
       proto[cursor++] = dstPort[0];
       proto[cursor++] = dstPort[1];
-    } else if (this.addressFamily === AddressFamily.INET6 && this.proxyAddress instanceof IPv6ProxyAddress) {
+    } else if (this.addressFamilyType === AddressFamilyType.INET6 && this.proxyAddress instanceof IPv6ProxyAddress) {
       for (let i = 0; i < 16; i++) {
         proto[cursor++] = this.proxyAddress.sourceAddress.address[i];
       }
@@ -82,7 +82,7 @@ export class V2ProxyProtocol {
       const dstPort = V2ProxyProtocol.separate32bitTo16bitPair(this.proxyAddress.destinationPort);
       proto[cursor++] = dstPort[0];
       proto[cursor++] = dstPort[1];
-    } else if (this.addressFamily === AddressFamily.UNIX && this.proxyAddress instanceof UnixProxyAddress) {
+    } else if (this.addressFamilyType === AddressFamilyType.UNIX && this.proxyAddress instanceof UnixProxyAddress) {
       for (let i = 0; i < 108; i++) {
         proto[cursor++] = this.proxyAddress.sourceAddress.address[i];
       }
@@ -131,8 +131,8 @@ export class V2ProxyProtocol {
       );
     }
     const afAndTransportProtocol = this.separate8bit(afAndTransportProtocolByte);
-    const addressFamily = AddressFamily[AddressFamily[afAndTransportProtocol[0]]];
-    if (addressFamily === undefined) {
+    const addressFamilyType = AddressFamilyType[AddressFamilyType[afAndTransportProtocol[0]]];
+    if (addressFamilyType === undefined) {
       throw new V2ProxyProtocolParseError('given address family is invalid');
     }
     const transportProtocol = TransportProtocol[TransportProtocol[afAndTransportProtocol[1]]];
@@ -147,7 +147,8 @@ export class V2ProxyProtocol {
       throw new V2ProxyProtocolParseError("given binary doesn't have bytes for specifying length");
     }
     const length = (upperLengthByte << 8) + lowerLengthByte;
-    const addressFamilyLength = AddressFamily.getLength(addressFamily);
+    const addressFamily = new AddressFamily(addressFamilyType);
+    const addressFamilyLength = addressFamily.getLength();
     if (length < addressFamilyLength) {
       throw new V2ProxyProtocolParseError("given specified length is shorter than address family's length");
     }
@@ -155,7 +156,7 @@ export class V2ProxyProtocol {
     return new V2ProxyProtocol(
       command,
       transportProtocol,
-      AddressFamily.getFactoryMethod(addressFamily)(input.slice(16)),
+      addressFamily.getFactoryMethod()(input.slice(16)),
       input.slice(addressFamilyLength + 16),
     );
   }
@@ -188,7 +189,7 @@ export class V2ProxyProtocol {
   }
 
   private unionAddressFamilyAndTransportProtocol(): number {
-    return this.addressFamily | this.transportProtocol;
+    return this.addressFamilyType | this.transportProtocol;
   }
 
   private static separate32bitTo16bitPair(num: number): [number, number] {

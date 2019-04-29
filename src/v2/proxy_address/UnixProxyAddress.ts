@@ -1,4 +1,4 @@
-import { AddressFamily } from '../enum/AddressFamily';
+import { AddressFamily, AddressFamilyType } from '../enum/AddressFamily';
 import { ProxyAddress } from './ProxyAddress';
 
 export type UnixAddressTuple = [
@@ -252,10 +252,10 @@ export class UnixProxyAddress implements ProxyAddress {
 
   // for AF_UNIX sockets, len = 216
   getLength(): number {
-    return AddressFamily.getLength(this.getAddressFamily());
+    return new AddressFamily(this.getAddressFamilyType()).getLength();
   }
 
-  getAddressFamily(): AddressFamily {
-    return AddressFamily.UNIX;
+  getAddressFamilyType(): AddressFamilyType {
+    return AddressFamilyType.UNIX;
   }
 }
