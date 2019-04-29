@@ -1,5 +1,6 @@
 import { Peer, INETProtocol, V1ProxyProtocol } from '../proxy-protocol';
 import { TextEncoder } from 'util';
+import { V1ProxyProtocolParseError } from './V1ProxyProtocol';
 
 test('should build V1 PROXY protocol with data successfully', async () => {
   const proto = new V1ProxyProtocol(
@@ -65,5 +66,7 @@ test('should parse V1 PROXY protocol without data as byte array successfully', a
 });
 
 test('should fail to parse V1 PROXY protocol without data', async () => {
-  expect(V1ProxyProtocol.parse('__INVALID__')).toBe(null);
+  expect(() => {
+    V1ProxyProtocol.parse('__INVALID__');
+  }).toThrowError(new V1ProxyProtocolParseError("given data isn't suitable for V1 PROXY protocols definition"));
 });

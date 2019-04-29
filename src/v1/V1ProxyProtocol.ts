@@ -3,6 +3,17 @@ import { INETProtocol } from './enum/INETProtocol';
 import { Peer } from './Peer';
 
 /**
+ * V1ProxyProtocolParseError is an error class that is raised on parsing error occurs.
+ */
+export class V1ProxyProtocolParseError implements Error {
+  readonly name: string;
+
+  constructor(readonly message: string) {
+    this.name = this.constructor.name;
+  }
+}
+
+/**
  * V1ProxyProtocol is a class that has responsibilities for building and parsing PROXY protocol V1.
  */
 export class V1ProxyProtocol {
@@ -44,14 +55,14 @@ export class V1ProxyProtocol {
   /**
    * Parses a given input string as V1 PROXY protocol and returns the structure.
    *
-   * If the given string is invalid, this method returns null as the result.
+   * If the given string is invalid, this method throws {@link V1ProxyProtocolParseError}.
    *
    * @param input
    */
   static parse(input: string | Uint8Array): V1ProxyProtocol | null {
     const matched = V1ProxyProtocol.v1ProxyProtocolRegexp.exec(this.normalizeToString(input));
     if (!matched) {
-      return null;
+      throw new V1ProxyProtocolParseError("given data isn't suitable for V1 PROXY protocols definition");
     }
 
     return new V1ProxyProtocol(
