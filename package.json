@@ -17,7 +17,7 @@
     "fmt": "npm run prettier -- --write",
     "check-illegal-fmt": "npm run prettier -- --list-different",
     "fix": "npm run fmt && npm run fix-lint",
-    "test": "jest",
+    "test": "jest --maxWorkers=10",
     "check": "npm run lint && npm run check-illegal-fmt && npm run test"
   },
   "keywords": [
