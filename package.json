@@ -18,8 +18,10 @@
     "check-illegal-fmt": "npm run prettier -- --list-different",
     "fix": "npm run fmt && npm run fix-lint",
     "test": "jest --maxWorkers=10",
-    "check": "npm run lint && npm run check-illegal-fmt && npm run test"
+    "check": "npm run lint && npm run check-illegal-fmt && npm run test",
+    "release": "npm run check && npm run build && npm publish"
   },
+  "files": ["lib", "!lib/.gitkeep", "example", "!example/.gitignore"],
   "keywords": [
     "PROXY-protocol"
   ],
