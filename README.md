@@ -12,6 +12,7 @@ Features
   - identifying the PROXY protocol version
 - Supports both of the version: V1 and V2 protocol
 - Also supports TypeScript
+- It doesn't requre the extra dependencies
 
 Usage
 --
