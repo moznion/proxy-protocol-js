@@ -97,6 +97,21 @@ console.log(proto);
 //   addressFamilyType: 16 }`
 ```
 
+Performance
+--
+
+The result of the comparison between this library (`proxy-protocol-js`) and [proxy-protocol](https://www.npmjs.com/package/proxy-protocol) is here:
+
+```
+proxy-protocol.parse x 246,423 ops/sec ±3.10% (32 runs sampled)
+proxy-protocol-js.parse x 481,388 ops/sec ±5.32% (69 runs sampled)
+Fastest is proxy-protocol-js.parse
+```
+
+(moreover, `proxy-protocol-js`'s benchmark contains unnecessary dummy codes for fairness)
+
+This benchmark run on the node v10.15.3 and the code is [here](./bench).
+
 Author
 --
 
