@@ -79,18 +79,7 @@ class V1BinaryProxyProtocolParser {
   private static readonly whitespace = 0x20;
   private static readonly lf = 0x0a;
   private static readonly cr = 0x0d;
-  private static readonly numberMap = {
-    0x30: 0,
-    0x31: 1,
-    0x32: 2,
-    0x33: 3,
-    0x34: 4,
-    0x35: 5,
-    0x36: 6,
-    0x37: 7,
-    0x38: 8,
-    0x39: 9,
-  };
+  private static readonly zeroChar = 0x30;
 
   private cursor: number;
 
@@ -168,8 +157,8 @@ class V1BinaryProxyProtocolParser {
         break;
       }
 
-      const num = V1BinaryProxyProtocolParser.numberMap[b];
-      if (num === undefined) {
+      const num = b - V1BinaryProxyProtocolParser.zeroChar;
+      if (num < 0 || num > 9) {
         throw new V1BinaryProxyProtocolParseError('invalid port information has come');
       }
       portArray[i++] = num;
