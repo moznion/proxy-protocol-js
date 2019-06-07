@@ -85,31 +85,30 @@ test('should raise error on parsing V1 PROXY protocol as byte array when protoco
   }).toThrowError(new V1BinaryProxyProtocolParseError("doesn't match with protocol signature"));
 });
 
-test('should raise error on parsing V1 PROXY protocol as byte array when invalid whitespace is given', () => {
-  const protocolText = 'PROXYTCP4 127.0.0.1 192.0.2.1 12345 54321\r\n';
-  const protocolBuf = Buffer.from(protocolText, 'utf8');
-
-  expect(() => {
-    V1BinaryProxyProtocol.parse(protocolBuf);
-  }).toThrowError(new V1BinaryProxyProtocolParseError("whitespace doesn't come"));
-});
-
 test('should raise error on parsing V1 PROXY protocol as byte array when newline character is missing', () => {
   {
-    const protocolText = 'PROXY TCP4 127.0.0.1 192.0.2.1 12345 54321 ';
+    const protocolText = 'PROXY TCP4 127.0.0.1 192.0.2.1  ';
     const protocolBuf = Buffer.from(protocolText, 'utf8');
 
     expect(() => {
       V1BinaryProxyProtocol.parse(protocolBuf);
-    }).toThrowError(new V1BinaryProxyProtocolParseError("PROXY protocol isn't terminated by newline characters"));
+    }).toThrowError(new V1BinaryProxyProtocolParseError('port information is missing'));
   }
   {
-    const protocolText = 'PROXY TCP4 127.0.0.1 192.0.2.1 12345 54321\r ';
+    const protocolText = 'PROXY TCP4 127.0.0.1 192.0.2.1 12345 5432X';
     const protocolBuf = Buffer.from(protocolText, 'utf8');
 
     expect(() => {
       V1BinaryProxyProtocol.parse(protocolBuf);
-    }).toThrowError(new V1BinaryProxyProtocolParseError("PROXY protocol isn't terminated by newline characters"));
+    }).toThrowError(new V1BinaryProxyProtocolParseError('invalid port information has come'));
+  }
+  {
+    const protocolText = 'PROXY TCP4 127.0.0.1 192.0.2.1 12345 54321\rX';
+    const protocolBuf = Buffer.from(protocolText, 'utf8');
+
+    expect(() => {
+      V1BinaryProxyProtocol.parse(protocolBuf);
+    }).toThrowError(new V1BinaryProxyProtocolParseError('invalid port information has come'));
   }
 });
 

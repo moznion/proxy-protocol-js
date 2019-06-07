@@ -75,7 +75,7 @@ export class V1BinaryProxyProtocolParseError implements Error {
 }
 
 class V1BinaryProxyProtocolParser {
-  private static readonly protocolSignature = Buffer.from('PROXY', 'utf8');
+  private static readonly protocolSignature = Buffer.from('PROXY ', 'utf8');
   private static readonly whitespace = 0x20;
   private static readonly lf = 0x0a;
   private static readonly cr = 0x0d;
@@ -100,17 +100,11 @@ class V1BinaryProxyProtocolParser {
 
   parse(): V1BinaryProxyProtocol {
     this.matchSignature();
-    this.matchWhitespace();
     const inetProtocol = this.getINETProtocol();
-    this.matchWhitespace();
     const srcAddr = this.getIPAddress();
-    this.matchWhitespace();
     const dstAddr = this.getIPAddress();
-    this.matchWhitespace();
-    const srcPort = this.getPort();
-    this.matchWhitespace();
-    const dstPort = this.getPort();
-    this.matchNewline();
+    const srcPort = this.getSrcPort();
+    const dstPort = this.getDstPort();
     const data = this.getData();
 
     return new V1BinaryProxyProtocol(inetProtocol, new Peer(srcAddr, srcPort), new Peer(dstAddr, dstPort), data);
@@ -121,19 +115,6 @@ class V1BinaryProxyProtocolParser {
       if (this.next() !== V1BinaryProxyProtocolParser.protocolSignature[i]) {
         throw new V1BinaryProxyProtocolParseError("doesn't match with protocol signature");
       }
-    }
-    this.next();
-  }
-
-  private matchWhitespace(): void {
-    if (this.current() !== V1BinaryProxyProtocolParser.whitespace) {
-      throw new V1BinaryProxyProtocolParseError("whitespace doesn't come");
-    }
-  }
-
-  private matchNewline(): void {
-    if (this.current() !== V1BinaryProxyProtocolParser.cr || this.next() !== V1BinaryProxyProtocolParser.lf) {
-      throw new V1BinaryProxyProtocolParseError("PROXY protocol isn't terminated by newline characters");
     }
   }
 
@@ -177,13 +158,13 @@ class V1BinaryProxyProtocolParser {
     return new TextDecoder('utf8').decode(Uint8Array.from(addrArray));
   }
 
-  private getPort(): number {
+  private getPort(isTerminated: (b: number) => boolean): number {
     let i = 0;
     const portArray: number[] = [];
 
     while (true) {
       const b = this.next();
-      if (b === V1BinaryProxyProtocolParser.whitespace || b === V1BinaryProxyProtocolParser.cr) {
+      if (isTerminated(b)) {
         break;
       }
 
@@ -206,6 +187,28 @@ class V1BinaryProxyProtocolParser {
     }
 
     return port;
+  }
+
+  private getSrcPort(): number {
+    return this.getPort(
+      (b): boolean => {
+        return b === V1BinaryProxyProtocolParser.whitespace;
+      },
+    );
+  }
+
+  private getDstPort(): number {
+    return this.getPort(
+      (b): boolean => {
+        if (b === V1BinaryProxyProtocolParser.cr) {
+          if (this.next() === V1BinaryProxyProtocolParser.lf) {
+            return true;
+          }
+          throw new V1BinaryProxyProtocolParseError('invalid port information has come');
+        }
+        return false;
+      },
+    );
   }
 
   private getData(): Uint8Array {
