@@ -1,4 +1,3 @@
-import { TextDecoder } from 'util';
 import { INETProtocol } from './enum/INETProtocol';
 import { Peer } from './Peer';
 
@@ -59,8 +58,8 @@ export class V1ProxyProtocol {
    *
    * @param input
    */
-  static parse(input: string | Uint8Array): V1ProxyProtocol | null {
-    const matched = V1ProxyProtocol.v1ProxyProtocolRegexp.exec(this.normalizeToString(input));
+  static parse(input: string): V1ProxyProtocol {
+    const matched = V1ProxyProtocol.v1ProxyProtocolRegexp.exec(input);
     if (!matched) {
       throw new V1ProxyProtocolParseError("given data isn't suitable for V1 PROXY protocols definition");
     }
@@ -78,14 +77,7 @@ export class V1ProxyProtocol {
    *
    * @param input
    */
-  static isValidProtocolSignature(input: string | Uint8Array): boolean {
-    return V1ProxyProtocol.normalizeToString(input).startsWith(V1ProxyProtocol.protocolSignature);
-  }
-
-  private static normalizeToString(input: string | Uint8Array): string {
-    if (typeof input === 'string') {
-      return input;
-    }
-    return new TextDecoder().decode(input);
+  static isValidProtocolSignature(input: string): boolean {
+    return input.startsWith(V1ProxyProtocol.protocolSignature);
   }
 }

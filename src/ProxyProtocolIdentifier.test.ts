@@ -1,5 +1,4 @@
 import { ProxyProtocolIdentifier, ProxyProtocolVersion } from './proxy-protocol';
-import { TextEncoder } from 'util';
 
 test('is V1 protocol with string', async () => {
   expect(ProxyProtocolIdentifier.identify('PROXY TCP4 127.0.0.1 192.0.2.1 12345 54321\r\n')).toBe(
@@ -8,9 +7,9 @@ test('is V1 protocol with string', async () => {
 });
 
 test('is V1 protocol with binary', async () => {
-  expect(
-    ProxyProtocolIdentifier.identify(new TextEncoder().encode('PROXY TCP4 127.0.0.1 192.0.2.1 12345 54321\r\n')),
-  ).toBe(ProxyProtocolVersion.V1);
+  expect(ProxyProtocolIdentifier.identify(Buffer.from('PROXY TCP4 127.0.0.1 192.0.2.1 12345 54321\r\n', 'utf8'))).toBe(
+    ProxyProtocolVersion.V1,
+  );
 });
 
 test('is V2 protocol', async () => {
