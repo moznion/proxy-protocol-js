@@ -21,7 +21,12 @@
     "check": "npm run lint && npm run check-illegal-fmt && npm run test",
     "release": "npm run check && npm run build && npm publish"
   },
-  "files": ["lib", "!lib/.gitkeep", "example", "!example/.gitignore"],
+  "files": [
+    "lib",
+    "!lib/.gitkeep",
+    "example",
+    "!example/.gitignore"
+  ],
   "keywords": [
     "PROXY-protocol"
   ],
