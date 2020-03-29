@@ -12,7 +12,7 @@ export class ProxyProtocolIdentifier {
    *
    * @param data is a string or list of binary, it expects the input is a PROXY protocol payload.
    */
-  static identify(data: string | Uint8Array): ProxyProtocolVersion {
+  public static identify(data: string | Uint8Array): ProxyProtocolVersion {
     if (typeof data === 'string') {
       if (V1ProxyProtocol.isValidProtocolSignature(data)) {
         return ProxyProtocolVersion.V1;

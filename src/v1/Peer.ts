@@ -8,5 +8,5 @@ export class Peer {
    * @param ipAddress
    * @param port
    */
-  constructor(readonly ipAddress: string, readonly port: number) {}
+  public constructor(public readonly ipAddress: string, public readonly port: number) {}
 }
