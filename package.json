@@ -47,9 +47,9 @@
     "@types/jest": "^25.1.4",
     "@types/node": "^13.9.5",
     "codecov": "^3.3.0",
-    "jest": "^24.7.1",
+    "jest": "^25.2.3",
     "prettier": "^2.0.2",
-    "ts-jest": "^24.0.2",
+    "ts-jest": "^25.2.1",
     "tslint": "^6.1.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.4.3"
