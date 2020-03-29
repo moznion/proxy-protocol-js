@@ -1,21 +1,47 @@
 version: 2
-jobs:
-  build:
-    docker:
-      - image: circleci/node:10.15
 
-    working_directory: ~/repo
-
+commands:
+  test-nodejs:
     steps:
+      - run:
+          name: Versions
+          command: npm version
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-      - run: npm install
+            - v{{ .Environment.CIRCLE_CACHE_VERSION }}-{{ arch }}-npm-cache-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package-lock.json" }}
+            - v{{ .Environment.CIRCLE_CACHE_VERSION }}-{{ arch }}-npm-cache-master-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install dependencies
+          command: npm ci
+      - run:
+          name: Check
+          command:
+            - npm check
+            - '$(npm bin)/codecov'
+      - save-npm-cache
+  save-npm-cache:
+    steps:
       - save_cache:
+          key: v{{ .Environment.CIRCLE_CACHE_VERSION }}-{{ arch }}-npm-cache-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package-lock.json" }}
           paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run: 'npm run check && $(npm bin)/codecov'
+            - ~/.npm/_cacache
+
+jobs:
+  node-v10:
+    docker:
+      - image: node:10
+    steps:
+      - test-nodejs
+  node-v12:
+    docker:
+      - image: node:12
+    steps:
+      - test-nodejs
+
+workflows:
+  node-multi-build:
+    jobs:
+      - node-v10
+      - node-v12
 
