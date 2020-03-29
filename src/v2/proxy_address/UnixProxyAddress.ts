@@ -112,7 +112,7 @@ export type UnixAddressTuple = [
   number,
   number,
   number,
-  number // 108 numbers (uint8)
+  number, // 108 numbers (uint8)
 ];
 
 /**
