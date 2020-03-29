@@ -16,9 +16,10 @@ commands:
           command: npm ci
       - run:
           name: Check
-          command:
-            - npm check
-            - '$(npm bin)/codecov'
+          command: npm check
+      - run:
+          name: Measure the code coverage
+          command: '$(npm bin)/codecov'
       - save-npm-cache
   save-npm-cache:
     steps:
