@@ -16,7 +16,7 @@ commands:
           command: npm ci
       - run:
           name: Check
-          command: npm check
+          command: npm run check
       - run:
           name: Measure the code coverage
           command: '$(npm bin)/codecov'
