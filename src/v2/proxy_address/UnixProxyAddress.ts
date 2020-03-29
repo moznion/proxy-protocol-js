@@ -119,14 +119,14 @@ export type UnixAddressTuple = [
  * UnixAddress represents the address for UNIX domain socket.
  */
 export class UnixAddress {
-  constructor(readonly address: UnixAddressTuple) {}
+  public constructor(public readonly address: UnixAddressTuple) {}
 
   /**
    * Factory method for UnixAddress class by an argument as a list of number.
    *
    * @param address
    */
-  static createFrom(address: number[]): UnixAddress {
+  public static createFrom(address: number[]): UnixAddress {
     return new UnixAddress([
       address[0] || 0,
       address[1] || 0,
@@ -242,7 +242,7 @@ export class UnixAddress {
   /**
    * Create a new UnixAddress's instance with empty address.
    */
-  static createWithEmptyAddress(): UnixAddress {
+  public static createWithEmptyAddress(): UnixAddress {
     return UnixAddress.createFrom([]);
   }
 }
@@ -253,14 +253,14 @@ export class UnixAddress {
  * It has source address information and destination address information.
  */
 export class UnixProxyAddress implements ProxyAddress {
-  constructor(readonly sourceAddress: UnixAddress, readonly destinationAddress: UnixAddress) {}
+  public constructor(public readonly sourceAddress: UnixAddress, public readonly destinationAddress: UnixAddress) {}
 
   /**
    * Factory method to construct an instance by a list of binary codes.
    *
    * @param data is a list of binary codes to construct an instance.
    */
-  static from(data: Uint8Array): UnixProxyAddress {
+  public static from(data: Uint8Array): UnixProxyAddress {
     const srcAddr = UnixAddress.createWithEmptyAddress();
     for (let i = 0; i < 108; i++) {
       srcAddr.address[i] = data[i];
@@ -277,7 +277,7 @@ export class UnixProxyAddress implements ProxyAddress {
   /**
    * {@inheritdoc}
    */
-  getLength(): number {
+  public getLength(): number {
     // for AF_UNIX sockets, len = 216
     return new AddressFamily(this.getAddressFamilyType()).getLength();
   }
@@ -285,7 +285,7 @@ export class UnixProxyAddress implements ProxyAddress {
   /**
    * {@inheritdoc}
    */
-  getAddressFamilyType(): AddressFamilyType {
+  public getAddressFamilyType(): AddressFamilyType {
     return AddressFamilyType.UNIX;
   }
 }

@@ -12,21 +12,21 @@ export type IPv4AddressTuple = [number, number, number, number];
  * IPv4Address represents the address for IPv4.
  */
 export class IPv4Address {
-  constructor(readonly address: IPv4AddressTuple) {}
+  public constructor(public readonly address: IPv4AddressTuple) {}
 
   /**
    * Factory method for IPv4Address class by an argument as a list of number.
    *
    * @param address
    */
-  static createFrom(address: number[]): IPv4Address {
+  public static createFrom(address: number[]): IPv4Address {
     return new IPv4Address([address[0] || 0, address[1] || 0, address[2] || 0, address[3] || 0]);
   }
 
   /**
    * Create a new IPv4Address's instance with empty address.
    */
-  static createWithEmptyAddress(): IPv4Address {
+  public static createWithEmptyAddress(): IPv4Address {
     return IPv4Address.createFrom([]);
   }
 }
@@ -37,11 +37,11 @@ export class IPv4Address {
  * It has source address information and destination address information.
  */
 export class IPv4ProxyAddress implements ProxyAddress {
-  constructor(
-    readonly sourceAddress: IPv4Address,
-    readonly sourcePort: number, // uint16_t
-    readonly destinationAddress: IPv4Address,
-    readonly destinationPort: number, // uint16_t
+  public constructor(
+    public readonly sourceAddress: IPv4Address,
+    public readonly sourcePort: number, // uint16_t
+    public readonly destinationAddress: IPv4Address,
+    public readonly destinationPort: number, // uint16_t
   ) {}
 
   /**
@@ -49,7 +49,7 @@ export class IPv4ProxyAddress implements ProxyAddress {
    *
    * @param data is a list of binary codes to construct an instance.
    */
-  static from(data: Uint8Array): IPv4ProxyAddress {
+  public static from(data: Uint8Array): IPv4ProxyAddress {
     return new IPv4ProxyAddress(
       new IPv4Address([data[0], data[1], data[2], data[3]]),
       (data[8] << 8) + data[9],
@@ -61,7 +61,7 @@ export class IPv4ProxyAddress implements ProxyAddress {
   /**
    * {@inheritdoc}
    */
-  getLength(): number {
+  public getLength(): number {
     // for TCP/UDP over IPv4, len = 12
     return new AddressFamily(this.getAddressFamilyType()).getLength();
   }
@@ -69,7 +69,7 @@ export class IPv4ProxyAddress implements ProxyAddress {
   /**
    * {@inheritdoc}
    */
-  getAddressFamilyType(): AddressFamilyType {
+  public getAddressFamilyType(): AddressFamilyType {
     return AddressFamilyType.INET;
   }
 }

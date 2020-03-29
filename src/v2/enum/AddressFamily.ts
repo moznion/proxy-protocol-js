@@ -40,12 +40,12 @@ export enum AddressFamilyType {
  * AddressFamily is a class that has companion methods for {@link AddressFamilyType}.
  */
 export class AddressFamily {
-  constructor(private readonly addressFamilyType: AddressFamilyType) {}
+  public constructor(private readonly addressFamilyType: AddressFamilyType) {}
 
   /**
    * Returns the length of address family's address.
    */
-  getLength() {
+  public getLength(): number {
     switch (this.addressFamilyType) {
       case AddressFamilyType.INET:
         return 12;
@@ -61,7 +61,9 @@ export class AddressFamily {
   /**
    * Returns factory method according to the address family.
    */
-  getFactoryMethod(): (d: Uint8Array) => IPv4ProxyAddress | IPv6ProxyAddress | UnixProxyAddress | UnspecProxyAddress {
+  public getFactoryMethod(): (
+    d: Uint8Array,
+  ) => IPv4ProxyAddress | IPv6ProxyAddress | UnixProxyAddress | UnspecProxyAddress {
     switch (this.addressFamilyType) {
       case AddressFamilyType.INET:
         return IPv4ProxyAddress.from;

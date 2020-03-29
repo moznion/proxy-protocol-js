@@ -29,14 +29,14 @@ export type IPv6AddressTuple = [
  * IPv6Address represents the address for IPv6.
  */
 export class IPv6Address {
-  constructor(readonly address: IPv6AddressTuple) {}
+  public constructor(public readonly address: IPv6AddressTuple) {}
 
   /**
    * Factory method for IPv6Address class by an argument as a list of number.
    *
    * @param address
    */
-  static createFrom(address: number[]): IPv6Address {
+  public static createFrom(address: number[]): IPv6Address {
     return new IPv6Address([
       address[0] || 0,
       address[1] || 0,
@@ -60,7 +60,7 @@ export class IPv6Address {
   /**
    * Create a new IPv6Address's instance with empty address.
    */
-  static createWithEmptyAddress(): IPv6Address {
+  public static createWithEmptyAddress(): IPv6Address {
     return IPv6Address.createFrom([]);
   }
 }
@@ -71,11 +71,11 @@ export class IPv6Address {
  * It has source address information and destination address information.
  */
 export class IPv6ProxyAddress implements ProxyAddress {
-  constructor(
-    readonly sourceAddress: IPv6Address,
-    readonly sourcePort: number, // uint16_t
-    readonly destinationAddress: IPv6Address,
-    readonly destinationPort: number, // uint16_t
+  public constructor(
+    public readonly sourceAddress: IPv6Address,
+    public readonly sourcePort: number, // uint16_t
+    public readonly destinationAddress: IPv6Address,
+    public readonly destinationPort: number, // uint16_t
   ) {}
 
   /**
@@ -83,7 +83,7 @@ export class IPv6ProxyAddress implements ProxyAddress {
    *
    * @param data is a list of binary codes to construct an instance.
    */
-  static from(data: Uint8Array): IPv6ProxyAddress {
+  public static from(data: Uint8Array): IPv6ProxyAddress {
     return new IPv6ProxyAddress(
       new IPv6Address([
         data[0],
@@ -129,7 +129,7 @@ export class IPv6ProxyAddress implements ProxyAddress {
   /**
    * {@inheritdoc}
    */
-  getLength(): number {
+  public getLength(): number {
     // for TCP/UDP over IPv6, len = 36
     return new AddressFamily(this.getAddressFamilyType()).getLength();
   }
@@ -137,7 +137,7 @@ export class IPv6ProxyAddress implements ProxyAddress {
   /**
    * {@inheritdoc}
    */
-  getAddressFamilyType(): AddressFamilyType {
+  public getAddressFamilyType(): AddressFamilyType {
     return AddressFamilyType.INET6;
   }
 }

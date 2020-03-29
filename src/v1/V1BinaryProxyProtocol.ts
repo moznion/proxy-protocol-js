@@ -14,11 +14,11 @@ export class V1BinaryProxyProtocol {
    * @param destination
    * @param data
    */
-  constructor(
-    readonly inetProtocol: INETProtocol,
-    readonly source: Peer,
-    readonly destination: Peer,
-    readonly data?: Uint8Array,
+  public constructor(
+    public readonly inetProtocol: INETProtocol,
+    public readonly source: Peer,
+    public readonly destination: Peer,
+    public readonly data?: Uint8Array,
   ) {}
 
   /**
@@ -26,7 +26,7 @@ export class V1BinaryProxyProtocol {
    *
    * If the instance has data payload, this method appends data into the after of the header.
    */
-  build(): Uint8Array {
+  public build(): Uint8Array {
     const proto = Buffer.from(
       `PROXY ${this.inetProtocol} ${this.source.ipAddress} ${this.destination.ipAddress} ${this.source.port} ${this.destination.port}\r\n`,
       'utf8',
@@ -41,7 +41,7 @@ export class V1BinaryProxyProtocol {
    *
    * @param input
    */
-  static parse(input: Uint8Array): V1BinaryProxyProtocol {
+  public static parse(input: Uint8Array): V1BinaryProxyProtocol {
     return new V1BinaryProxyProtocolParser(input).parse();
   }
 
@@ -50,7 +50,7 @@ export class V1BinaryProxyProtocol {
    *
    * @param input
    */
-  static isValidProtocolSignature(input: Uint8Array): boolean {
+  public static isValidProtocolSignature(input: Uint8Array): boolean {
     try {
       new V1BinaryProxyProtocolParser(input).matchSignature();
     } catch (err) {
@@ -65,9 +65,9 @@ export class V1BinaryProxyProtocol {
  * V1BinaryProxyProtocolParseError is an error class that is raised on parsing error occurs.
  */
 export class V1BinaryProxyProtocolParseError implements Error {
-  readonly name: string;
+  public readonly name: string;
 
-  constructor(readonly message: string) {
+  public constructor(public readonly message: string) {
     this.name = this.constructor.name;
   }
 }
@@ -81,11 +81,11 @@ class V1BinaryProxyProtocolParser {
 
   private cursor: number;
 
-  constructor(private readonly input: Uint8Array) {
+  public constructor(private readonly input: Uint8Array) {
     this.cursor = -1;
   }
 
-  parse(): V1BinaryProxyProtocol {
+  public parse(): V1BinaryProxyProtocol {
     this.matchSignature();
     const inetProtocol = this.getINETProtocol();
     const srcAddr = this.getIPAddress();
@@ -97,7 +97,7 @@ class V1BinaryProxyProtocolParser {
     return new V1BinaryProxyProtocol(inetProtocol, new Peer(srcAddr, srcPort), new Peer(dstAddr, dstPort), data);
   }
 
-  matchSignature(): void {
+  public matchSignature(): void {
     for (let i = 0; i < V1BinaryProxyProtocolParser.protocolSignature.length; i++) {
       if (this.next() !== V1BinaryProxyProtocolParser.protocolSignature[i]) {
         throw new V1BinaryProxyProtocolParseError("doesn't match with protocol signature");
@@ -177,9 +177,7 @@ class V1BinaryProxyProtocolParser {
   }
 
   private getSrcPort(): number {
-    return this.getPort((b): boolean => {
-      return b === V1BinaryProxyProtocolParser.whitespace;
-    });
+    return this.getPort((b): boolean => b === V1BinaryProxyProtocolParser.whitespace);
   }
 
   private getDstPort(): number {

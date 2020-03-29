@@ -10,9 +10,9 @@ import { UnspecProxyAddress } from './proxy_address/UnspecProxyAddress';
  * V2ProxyProtocolParseError is an error class that is raised on parsing error occurs.
  */
 export class V2ProxyProtocolParseError implements Error {
-  readonly name: string;
+  public readonly name: string;
 
-  constructor(readonly message: string) {
+  public constructor(public readonly message: string) {
     this.name = this.constructor.name;
   }
 }
@@ -41,13 +41,13 @@ export class V2ProxyProtocol {
   private static readonly initialHeaderOffset =
     V2ProxyProtocol.protocolSignatureLength + V2ProxyProtocol.protocolMetaLength;
 
-  readonly addressFamilyType: AddressFamilyType;
+  public readonly addressFamilyType: AddressFamilyType;
 
-  constructor(
-    readonly command: Command,
-    readonly transportProtocol: TransportProtocol,
-    readonly proxyAddress: IPv4ProxyAddress | IPv6ProxyAddress | UnixProxyAddress | UnspecProxyAddress,
-    readonly data?: Uint8Array,
+  public constructor(
+    public readonly command: Command,
+    public readonly transportProtocol: TransportProtocol,
+    public readonly proxyAddress: IPv4ProxyAddress | IPv6ProxyAddress | UnixProxyAddress | UnspecProxyAddress,
+    public readonly data?: Uint8Array,
   ) {
     this.addressFamilyType = proxyAddress.getAddressFamilyType();
   }
@@ -57,7 +57,7 @@ export class V2ProxyProtocol {
    *
    * If the instance has data payload, this method appends data into the after of the header.
    */
-  build(): Uint8Array {
+  public build(): Uint8Array {
     const proto = this.initProto();
     let cursor = V2ProxyProtocol.initialHeaderOffset;
 
@@ -120,7 +120,7 @@ export class V2ProxyProtocol {
    *
    * @param input
    */
-  static parse(input: Uint8Array): V2ProxyProtocol {
+  public static parse(input: Uint8Array): V2ProxyProtocol {
     if (!this.isValidProtocolSignature(input)) {
       throw new V2ProxyProtocolParseError("given binary doesn't have v2 PROXY protocol's signature");
     }
@@ -228,7 +228,7 @@ export class V2ProxyProtocol {
    *
    * @param input
    */
-  static isValidProtocolSignature(input: Uint8Array): boolean {
+  public static isValidProtocolSignature(input: Uint8Array): boolean {
     for (let i = 0; i < V2ProxyProtocol.protocolSignatureLength; i++) {
       if (input[i] !== V2ProxyProtocol.protocolSignature[i]) {
         return false;

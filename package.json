@@ -11,7 +11,7 @@
   "scripts": {
     "clean": "rm -rf lib/*",
     "build": "tsc",
-    "lint": "tslint --project ./tsconfig.json --config ./tslint.json",
+    "lint": "eslint . --ext .ts",
     "fix-lint": "npm run lint -- --fix",
     "prettier": "find src -name \"*.ts\" | xargs prettier --config .prettierrc",
     "fmt": "npm run prettier -- --write",
@@ -46,12 +46,15 @@
   "devDependencies": {
     "@types/jest": "^25.1.4",
     "@types/node": "^13.9.5",
+    "@typescript-eslint/eslint-plugin": "^2.25.0",
+    "@typescript-eslint/parser": "^2.25.0",
     "codecov": "^3.3.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-prefer-arrow": "^1.1.7",
     "jest": "^25.2.3",
     "prettier": "^2.0.2",
     "ts-jest": "^25.2.1",
-    "tslint": "^6.1.0",
-    "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.4.3"
   },
   "dependencies": {}
