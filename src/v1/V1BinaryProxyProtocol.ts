@@ -28,9 +28,7 @@ export class V1BinaryProxyProtocol {
    */
   build(): Uint8Array {
     const proto = Buffer.from(
-      `PROXY ${this.inetProtocol} ${this.source.ipAddress} ${this.destination.ipAddress} ${this.source.port} ${
-        this.destination.port
-      }\r\n`,
+      `PROXY ${this.inetProtocol} ${this.source.ipAddress} ${this.destination.ipAddress} ${this.source.port} ${this.destination.port}\r\n`,
       'utf8',
     );
     return this.data ? Buffer.concat([proto, this.data]) : proto;
@@ -179,25 +177,21 @@ class V1BinaryProxyProtocolParser {
   }
 
   private getSrcPort(): number {
-    return this.getPort(
-      (b): boolean => {
-        return b === V1BinaryProxyProtocolParser.whitespace;
-      },
-    );
+    return this.getPort((b): boolean => {
+      return b === V1BinaryProxyProtocolParser.whitespace;
+    });
   }
 
   private getDstPort(): number {
-    return this.getPort(
-      (b): boolean => {
-        if (b === V1BinaryProxyProtocolParser.cr) {
-          if (this.next() === V1BinaryProxyProtocolParser.lf) {
-            return true;
-          }
-          throw new V1BinaryProxyProtocolParseError('invalid port information has come');
+    return this.getPort((b): boolean => {
+      if (b === V1BinaryProxyProtocolParser.cr) {
+        if (this.next() === V1BinaryProxyProtocolParser.lf) {
+          return true;
         }
-        return false;
-      },
-    );
+        throw new V1BinaryProxyProtocolParseError('invalid port information has come');
+      }
+      return false;
+    });
   }
 
   private getData(): Uint8Array {

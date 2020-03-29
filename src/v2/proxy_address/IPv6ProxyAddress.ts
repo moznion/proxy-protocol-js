@@ -22,7 +22,7 @@ export type IPv6AddressTuple = [
   number,
   number,
   number,
-  number // 16 numbers (uint8)
+  number, // 16 numbers (uint8)
 ];
 
 /**
