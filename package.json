@@ -44,13 +44,13 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^24.0.11",
-    "@types/node": "^11.13.4",
+    "@types/jest": "^25.1.4",
+    "@types/node": "^13.9.5",
     "codecov": "^3.3.0",
     "jest": "^24.7.1",
     "prettier": "^1.17.0",
     "ts-jest": "^24.0.2",
-    "tslint": "^5.15.0",
+    "tslint": "^6.1.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.4.3"
   },
