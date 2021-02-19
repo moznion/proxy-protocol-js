@@ -55,7 +55,8 @@
     "jest": "^25.2.3",
     "prettier": "^2.0.2",
     "ts-jest": "^25.2.1",
-    "typescript": "^3.4.3"
+    "typescript": "^3.4.3",
+    "node-notifier": ">=8.0.1"
   },
   "dependencies": {}
 }

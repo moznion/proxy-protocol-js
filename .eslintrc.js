@@ -32,7 +32,8 @@ module.exports = {
       "error"
     ],
     "getter-return": [
-      "error" ],
+      "error"
+    ],
     "no-async-promise-executor": [
       "error"
     ],
@@ -236,20 +237,7 @@ module.exports = {
     "prefer-arrow/prefer-arrow-functions": "error",
     "prefer-const": "error",
     "radix": "error",
-    "no-restricted-globals": ["error",
-      {
-        "name": "parseInt",
-        "message": "tsstyle#type-coercion",
-      },
-      {
-        "name": "parseFloat",
-        "message": "tsstyle#type-coercion",
-      },
-      {
-        "name": "Array",
-        "message": "tsstyle#type-coercion",
-      },
-    ],
+    "no-array-constructor": "error",
     "@typescript-eslint/ban-types": ["error", {
       "types": {
         "Object": {
