@@ -167,7 +167,8 @@ module.exports = {
       "error"
     ],
     "no-unused-labels": "error",
-    "no-unused-vars": [
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
       "error"
     ],
     "no-useless-catch": [
@@ -187,7 +188,6 @@ module.exports = {
       "error"
     ],
     "@typescript-eslint/array-type": "error",
-    "@typescript-eslint/class-name-casing": "error",
     "@typescript-eslint/consistent-type-assertions": "error",
     "@typescript-eslint/explicit-member-accessibility": [
       "error",
@@ -195,7 +195,6 @@ module.exports = {
         "accessibility": "explicit"
       }
     ],
-    "@typescript-eslint/interface-name-prefix": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-inferrable-types": "error",
     "@typescript-eslint/no-namespace": "error",
