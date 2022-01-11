@@ -28,20 +28,20 @@ commands:
             - ~/.npm/_cacache
 
 jobs:
-  node-v10:
-    docker:
-      - image: node:10
-    steps:
-      - test-nodejs
   node-v12:
     docker:
       - image: node:12
+    steps:
+      - test-nodejs
+  node-v14:
+    docker:
+      - image: node:14
     steps:
       - test-nodejs
 
 workflows:
   node-multi-build:
     jobs:
-      - node-v10
       - node-v12
+      - node-v14
 
