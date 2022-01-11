@@ -22,18 +22,7 @@ export class V2ProxyProtocolParseError implements Error {
  */
 export class V2ProxyProtocol {
   private static readonly protocolSignature = new Uint8Array([
-    0x0d,
-    0x0a,
-    0x0d,
-    0x0a,
-    0x00,
-    0x0d,
-    0x0a,
-    0x51,
-    0x55,
-    0x49,
-    0x54,
-    0x0a,
+    0x0d, 0x0a, 0x0d, 0x0a, 0x00, 0x0d, 0x0a, 0x51, 0x55, 0x49, 0x54, 0x0a,
   ]);
   private static readonly protocolSignatureLength = V2ProxyProtocol.protocolSignature.length;
   private static readonly protocolMetaLength = 4;
